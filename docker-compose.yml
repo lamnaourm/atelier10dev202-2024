@@ -1,0 +1,47 @@
+version: '3.8'
+services:
+  order-api:
+    build: ./order-service/
+    ports:
+      - 3000:3000
+    environment:
+      - port=3000
+      - url_mongo=mongodb://dborders:27017/dborders
+      - url_rabbit=amqp://guest:guest@rabbit:5672
+    depends_on:
+      - dbproducts
+      - rabbit
+  product-api:
+    build: ./product-service/
+    ports:
+      - 3001:3000
+    environment:
+      - port=3000
+      - url_mongo=mongodb://dbproducts:27017/dborders
+      - url_rabbit=amqp://guest:guest@rabbit:5672
+    depends_on:
+      - dbproducts
+      - rabbit
+  dbproducts:
+    image: mongo
+    ports:
+      - 30001:27017
+    volumes:
+      - vprodcuts:/data/db
+  dborders:
+    image: mongo
+    ports:
+      - 30002:27017
+    volumes:
+      - vorders:/data/db
+  rabbit:
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - vrabbit:/var/lib/rabbitmq
+volumes:
+  vprodcuts:
+  vorders:
+  vrabbit:

@@ -5,7 +5,7 @@ import productroute from './routes/product.js'
 const app = express();
 app.use(express.json());
 
-mongoose.connect('mongodb://localhost:27017/dbproducts')
+mongoose.connect(process.env.url_mongo)
         .then(() => {
             console.log('Connected to mongodb')
         })
@@ -15,7 +15,7 @@ mongoose.connect('mongodb://localhost:27017/dbproducts')
 
 app.use('/products', productroute)
 
-app.listen(3000, (err) => {
+app.listen(process.env.port, (err) => {
     if(!err)
         console.log('Unable to start Server at 3000')
     else 

@@ -10,7 +10,7 @@ var connection, channel;
 const queueName1 = 'order-service-queue';
 const queueName2 = 'produit-service-queue';
 
-mongoose.connect('mongodb://localhost:27017/dborders')
+mongoose.connect(process.env.url_mongo)
     .then(() => {
         console.log('Connected to mongodb')
     })
@@ -19,7 +19,7 @@ mongoose.connect('mongodb://localhost:27017/dborders')
     })
 
 async function connectToRabbitMQ() {
-    const amqpServer = "amqp://guest:guest@localhost:5672";
+    const amqpServer = process.env.url_rabbit
     connection = await amqp.connect(amqpServer);
     channel = await connection.createChannel();
     await channel.assertQueue(queueName1);
@@ -41,7 +41,7 @@ connectToRabbitMQ().then(() => {
     })
 })
 
-app.listen(3001, (err) => {
+app.listen(process.env.port, (err) => {
     if (!err)
         console.log('Unable to start Server at 3000')
     else
