@@ -9,6 +9,7 @@ app.use(express.json());
 var connection, channel;
 const queueName1 = 'order-service-queue';
 const queueName2 = 'produit-service-queue';
+const queueName3 = 'mail-service-queue';
 
 mongoose.connect(process.env.url_mongo)
     .then(() => {
@@ -24,6 +25,7 @@ async function connectToRabbitMQ() {
     channel = await connection.createChannel();
     await channel.assertQueue(queueName1);
     await channel.assertQueue(queueName2);
+    await channel.assertQueue(queueName3);
 }
 
 connectToRabbitMQ().then(() => {
@@ -35,6 +37,7 @@ connectToRabbitMQ().then(() => {
 
         OrderModel.create(order).then((o) => {
            channel.sendToQueue(queueName2, Buffer.from(JSON.stringify(o)))
+           channel.sendToQueue(queueName3, Buffer.from(JSON.stringify(o)))
         })
 
         channel.ack(data)
